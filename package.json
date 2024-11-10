@@ -1,0 +1,24 @@
+{
+  "name": "easybank-backend",
+  "version": "1.0.0",
+  "main": "src/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node ./bin/www",
+    "dev": "nodemon ./bin/www",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "crypto": "^1.0.1",
+    "jose": "^5.9.6",
+    "mongodb": "^6.10.0"
+  },
+  "devDependencies": {
+    "http-errors": "^2.0.0",
+    "nodemon": "^3.1.7"
+  }
+}
