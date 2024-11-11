@@ -40,6 +40,7 @@ class Schema {
  
   // Metodos para validar los datos segun el Schema
   validate(data) {
+    this.applyMethods(data);
     const errors = [];
     for (const field in this.definition) {
       const rules = this.definition[field];

@@ -7,7 +7,7 @@ const controller = {};
 controller.register = async (req, res, next) => {
   try {
     const { name, lastname, username, email, password } = req.body;
-    
+
     const user = await User.findOne({ email });
 
     if (user) {
@@ -24,7 +24,7 @@ controller.register = async (req, res, next) => {
       password
     };
 
-    const userInsert =  await User.create(newUser); 
+    const userInsert =  await User.create(newUser);
 
     if (!userInsert) {
       res.writeHead(500, { 'Content-Type': 'application/json' });
@@ -42,9 +42,9 @@ controller.register = async (req, res, next) => {
 
 controller.login = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const { username, password } = req.body;
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ username });
 
     if (!user) {
       res.writeHead(401, { 'Content-Type': 'application/json' });
