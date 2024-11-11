@@ -4,7 +4,6 @@ const secret = new TextEncoder().encode(process.env.TOKEN_SECRET || 'Super Secre
 const expTime = process.env.TOKEN_EXPIRATION || '5m';
 
 export const createToken = async (id) => {
-  console.log('createToken');
   return await new SignJWT()
     .setProtectedHeader({ alg: 'HS256' })
     .setSubject(id)

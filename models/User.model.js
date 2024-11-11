@@ -34,7 +34,7 @@ const userSchema = new Schema({
 
 userSchema.methods = {
   encryptPassword: function(password) {
-    if (!this.password) return '';
+    if (!password) return '';
     try {
       const _password = crypto.pbkdf2Sync(
         password,
@@ -51,7 +51,7 @@ userSchema.methods = {
   makeSalt: function() {
     return crypto.randomBytes(16).toString('hex');
   },
-  comparedPassword: function(password) {
+  comparePassword: function(password) {
     return this.hashedPassword === this.encryptPassword(password);
   }
 }
@@ -61,6 +61,7 @@ userSchema
   .set(function(password = crypto.randomBytes(16).toString('hex')) {
     this.salt = this.makeSalt();
     this.hashedPassword = this.encryptPassword(password);
+    delete this.password;
   });
 
 const User = new Model(

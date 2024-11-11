@@ -4,12 +4,20 @@ class Model {
   constructor(collectionName, schema) {
     this.collectionName = collectionName;
     this.schema = schema;
+
   }
 
   async init() {
     if (!this.collection) {
       const db = await connect();
       this.collection = db.collection(this.collectionName);
+    }
+  }
+    
+  applyMethodsToPrototype() {
+    // Asigna los métodos al prototipo de la clase
+    for (const methodName in this.schema.methods) {
+      Model.prototype[methodName] = this.schema.methods[methodName];
     }
   }
 
@@ -26,11 +34,16 @@ class Model {
 
   async findOne(query) {
     await this.init();
-    return this.collection.findOne(query);
+    const doc = await this.collection.findOne(query);
+    if (doc) {
+      this.schema.applyMethods(doc);
+    }
+    return doc;
   }
 
   async updateOne(query, update) {
     await this.init();
+    console.log(query, update);
     return this.collection.updateOne(query, update);
   }
 

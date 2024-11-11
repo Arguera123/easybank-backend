@@ -9,7 +9,6 @@ controller.register = async (req, res, next) => {
     const { name, lastname, username, email, password } = req.body;
     
     const user = await User.findOne({ email });
-    console.log(user);
 
     if (user) {
       res.writeHead(400, { 'Content-Type': 'application/json' });
@@ -53,20 +52,19 @@ controller.login = async (req, res, next) => {
       return;
     }
 
-    console.log(user);
     if (!user.comparePassword(password)) {
       res.writeHead(401, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ message: 'Invalid username or password' }));
       return;
     }
-    
-    console.log('login');
-    const token = await createToken(user._id);
-    console.log(token);
 
-    user.token = token;
+    const token = await createToken(user._id);
+
+    const update = {
+      $set: { token: token }
+    }
   
-    await user.updateOne( user._id, { token: token });
+    await User.updateOne( { email: user.email }, update);
 
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ token: token }));
