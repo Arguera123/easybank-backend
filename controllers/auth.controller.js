@@ -74,4 +74,16 @@ controller.login = async (req, res, next) => {
   }
 };
 
+controller.whoami = async (req, res, next) => {
+  try {
+    const { _id, name, lastname, username, email } = req.user;
+
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ _id, name, lastname, username, email }));
+
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default controller;

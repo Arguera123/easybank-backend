@@ -9,12 +9,12 @@ class Schema {
 
     if (this.options.timestamps) {
       this.definition.createdAt = {
-        type: Date,
-        default: Date.now(),
+        type: String,
+        default: new Date().toISOString(),
       };
       this.definition.updatedAt = {
-        type: Date,
-        default: Date.now(),
+        type: String,
+        default: new Date().toISOString(),
       };
     }
 

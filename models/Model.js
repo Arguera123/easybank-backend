@@ -1,4 +1,5 @@
 import { connect } from '../config/database.config.js';
+import { ObjectId } from 'mongodb';
 
 class Model {
   constructor(collectionName, schema) {
@@ -41,9 +42,23 @@ class Model {
     return doc;
   }
 
+  async findById(id) {
+    await this.init();
+
+    // Verifica si el ID es un ObjectId válido
+    if (!ObjectId.isValid(id)) {
+      throw new Error('El ID proporcionado no es válido');
+    }
+
+    // Convierte el ID a un ObjectId de MongoDB
+    const objectId = new ObjectId(id);
+
+    // Realiza la búsqueda en la colección
+    return this.collection.findOne({ _id: objectId });
+  }
+
   async updateOne(query, update) {
     await this.init();
-    console.log(query, update);
     return this.collection.updateOne(query, update);
   }
 

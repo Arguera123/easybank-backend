@@ -30,6 +30,10 @@ const userSchema = new Schema({
     type: String,
     required: false,
   },
+  rol: {
+    type: String,
+    default: () => 'user',
+  }
 }, { timestamps: true });
 
 userSchema.methods = {
