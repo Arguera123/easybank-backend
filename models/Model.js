@@ -21,6 +21,31 @@ class Model {
       Model.prototype[methodName] = this.schema.methods[methodName];
     }
   }
+  
+  async save() {
+    await this.init();
+
+    if (this._id) {
+      const result = await this.collection.updateOne(
+        { _id: this._id },
+        { $set: this }
+      );
+      
+      if (result.matchedCount === 0) {
+        throw new Error('No se encontró el documento para actualizar');
+      }
+      return result;
+    } else {
+      const errors = this.schema.validate(this);
+      if (errors.length > 0) {
+        console.log(errors);
+        throw new Error(errors.join(', '));
+      }
+
+      const result = await this.collection.insertOne(this);
+      return result;
+    }
+  }
 
   async create(doc) {
     const errors = this.schema.validate(doc);
@@ -56,6 +81,11 @@ class Model {
     // Realiza la búsqueda en la colección
     return this.collection.findOne({ _id: objectId });
   }
+
+  async find(query) {
+    await this.init();
+    return this.collection.find(query).toArray();
+  } 
 
   async updateOne(query, update) {
     await this.init();

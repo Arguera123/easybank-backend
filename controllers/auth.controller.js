@@ -1,6 +1,6 @@
-import httpError from 'http-errors';
 import User from '../models/User.model.js';
 import { createToken, verifyToken } from '../utils/jw.tools.js';
+import httpError from 'http-errors';
 
 const controller = {};
 
@@ -10,11 +10,7 @@ controller.register = async (req, res, next) => {
 
     const user = await User.findOne({ email });
 
-    if (user) {
-      res.writeHead(400, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: 'User already exists' }));
-      return;
-    }
+    if (user) throw httpError(400, 'User already exists');
 
     const newUser = {
       name,
@@ -24,13 +20,9 @@ controller.register = async (req, res, next) => {
       password
     };
 
-    const userInsert =  await User.create(newUser);
+    const userInsert = await User.create(newUser);
 
-    if (!userInsert) {
-      res.writeHead(500, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: 'Error creating user' }));
-      return;
-    }
+    if (!userInsert) throw httpError(500, 'Error creating user'); 
     
     res.writeHead(201, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ message: 'User created successfully' }));
@@ -46,17 +38,9 @@ controller.login = async (req, res, next) => {
 
     const user = await User.findOne({ username });
 
-    if (!user) {
-      res.writeHead(401, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ message: 'Invalid username or password' }));
-      return;
-    }
+    if (!user) throw httpError(401, 'Invalid username or password'); 
 
-    if (!user.comparePassword(password)) {
-      res.writeHead(401, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ message: 'Invalid username or password' }));
-      return;
-    }
+    if (!user.comparePassword(password)) throw httpError(401, 'Invalid username or password'); 
 
     const token = await createToken(user._id);
 
@@ -76,10 +60,10 @@ controller.login = async (req, res, next) => {
 
 controller.whoami = async (req, res, next) => {
   try {
-    const { _id, name, lastname, username, email } = req.user;
+    const { _id, name, lastname, username, email, rol } = req.user;
 
     res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ _id, name, lastname, username, email }));
+    res.end(JSON.stringify({ _id, name, lastname, username, email, rol }));
 
   } catch (error) {
     next(error);

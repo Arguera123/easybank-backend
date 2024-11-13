@@ -12,49 +12,27 @@ middlewares.authentication = async (req, res, next) => {
   try {
     const authorization = req.headers['authorization']; 
 
-    if (!authorization) {
-      res.writeHead(401, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: 'User not authenticated 1' }));
-    }
+    if (!authorization) throw httpErrors(401, 'User not authenticated'); 
 
     const [prefix, token] = authorization.split(' ');
 
-    if (!token) {
-      res.writeHead(401, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: 'User not authenticated 2' }));
-    }
+    if (!token) throw httpErrors(401, 'User not authenticated');
 
-    if (prefix !== PREFIX) {
-      console.log('prefix', prefix, 'i');
-      console.log('PREFIX', PREFIX, 'i');
-      res.writeHead(401, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: 'User not authenticated 3' }));
-    }
+    if (prefix !== PREFIX) throw httpErrors(401, 'User not authenticated'); 
 
     const payload = await verifyToken(token);  
 
-    if (!payload) {
-      res.writeHead(401, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: 'User not authenticated 4' }));
-    }
+    if (!payload) throw httpErrors(401, 'User not authenticated'); 
 
     const userId = payload['sub'];
 
     const user = await User.findById(userId);
-    console.log(user);
 
-    if (!user) {
-      res.writeHead(401, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: 'User not authenticated 5' }));
-    }
+    if (!user) throw httpErrors(401, 'User not authenticated');
 
     const isValidToken = user.token === token;
-    console.log(isValidToken);
 
-    if (!isValidToken) {
-      res.writeHead(401, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: 'User not authenticated 6' }));
-    }
+    if (!isValidToken) throw httpErrors(401, 'User not authenticated'); 
 
     req.user = user;
     req.token = token;

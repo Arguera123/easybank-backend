@@ -1,13 +1,17 @@
 import httpError from 'http-errors';
+import User from '../models/User.model.js';
 
-export const getUser = (req, res, next) => {
-  const userId = req.url.split('/').pop();
-  const user = null;
+const controller = {};
 
-  if (!user) {
-    throw httpError(404, 'User not found');
+controller.getUsers = async (req, res, next) => {
+  try {
+    const users = await User.find({});
+      
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify(users));
+  } catch (error) {
+    next(error);
   }
-
-  res.writeHead(200, { 'Content-Type': 'application/json' });
-  res.end(JSON.stringify(user));
 };
+
+export default controller;
